@@ -14,6 +14,7 @@ void writeScreenSelect (account *myAccount, int scrollLine, int selectLine);  //
 int selectEntry(account *myAccount, int *scrollLine);					// return the selected entryNum after it is selected
 
 int calcTotalLines(account * myAccount);		// calculates the number of lines needed to print the account in full
+int calcLine(account * myAccount, int entryNum, int scl); // calculates the line on which a given entry will be given the scroll number
 
 int getEntryNum(account *myAccount, int selected, int scl);			// gets the entrynum from the selected offset and the scroll line number
 

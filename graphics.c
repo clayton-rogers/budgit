@@ -443,4 +443,25 @@ int getEntryNum (account *myAccount, int selected, int scl) {
 	return -1;
 }
 
-
+int calcLine(account * myAccount, int entryNum, int scl) {
+	
+	int curEntry = 0;
+	int lineNumber = 0;
+	date curDate;
+	curDate.month = 1;
+	curDate.year = 1;
+	entry * tmpEntry;
+	
+	while (curEntry != entryNum && curEntry < myAccount->numEntry) {
+		tmpEntry = getEntry(myAccount, curEntry);
+		if (dateEqual(curDate, tmpEntry->Date)) {
+			++curEntry;
+		} else {
+			curDate.month = tmpEntry->Date.month;
+			curDate.year = tmpEntry->Date.year;
+		}
+		++lineNumber;
+	}
+	
+	return lineNumber;
+}
