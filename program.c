@@ -103,7 +103,6 @@ void start (runinfo infos) {
 				break;
 		}
 		
-		
 		// refresh the screen if it is nesesary
 		if (needRef) {
 			writeScreen(acc, scrollPos);
@@ -119,13 +118,7 @@ void start (runinfo infos) {
 	
 	
 	
-	/*
-	ret = writeAccount(acc, "acct/newTest.act");
 	
-	if (ret != 0) {
-		printf("Writing account failed...\n");
-	}
-	*/
 
 }
 
