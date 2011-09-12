@@ -103,6 +103,7 @@ void start (runinfo infos) {
 				break;
 		}
 		
+		
 		// refresh the screen if it is nesesary
 		if (needRef) {
 			writeScreen(acc, scrollPos);
