@@ -19,7 +19,7 @@ int dateEqual (date date1, date date2) 	{
 
 void printEntry(entry * myEntry, int col) {
 	int descSize = col;
-	char buffer[500];
+	char buffer[200];
 	int dollars, cents;
 	buffer[0] = '\0';	// empty string
 	// figure out how much space we have for the description and how much padding we may need
@@ -111,6 +111,7 @@ void getDateHeader(char dest[], date myDate) {
 	
 	strcat(dest, " ");
 	
+	// FIXME: there is something wrong here
 	sprintf(dest, "%s%d", dest, (myDate.year+2000));
 }
 
@@ -324,22 +325,29 @@ int calcTotalLines (account* myAccount) {
 int selectEntry(account *myAccount, int *scrollLine) {
 	// returns -1 when an invalid selection is made
 	
-	// TODO: shouldn't be able to highlight date headers
-	// TODO: default selected should be last entry
-	
 	int header = 1;			// the number of lines in the header
 	
-	int selected = 0;
 	int scl = *scrollLine;
+	int selected = calcLine(myAccount, myAccount->numEntry-1,scl) - scl;
+		// ^ sets the currently selected entry to the last one
 	int input;
-	int cont = 1;
+	int running = 1;
 	int row, col;
 	short pair;
 	attr_t prevAttr;
 	
 	getmaxyx(stdscr, row, col);
+	if (col < 80) return -1;	// error
 	
-	while (cont) {
+	// if the last entry is not visible then we will have to scroll down until it is
+	// header fix here
+	while (selected > row-2) {
+		--selected;
+		++scl;
+		writeScreenSelect (myAccount, scl, selected+header);
+	}
+	
+	while (running) {
 		
 		// print the screen with hilighting
 		writeScreenSelect(myAccount, scl, selected+header);
@@ -350,6 +358,8 @@ int selectEntry(account *myAccount, int *scrollLine) {
 		// process the input
 		switch (input) {
 			case KEY_UP:
+			case 'k':
+			case 'K':
 				--selected;
 				if (selected < 0) {
 					selected = 0;
@@ -363,18 +373,31 @@ int selectEntry(account *myAccount, int *scrollLine) {
 				if (pair == 3) {
 					--selected;
 					if (selected < 0) {
-						selected = 0;
+						selected = 1;
 						--scl;
 						if (scl < 0) scl = 0;
 						writeScreenSelect (myAccount, scl, selected+header);
 					}
 				}
+				if (getEntryNum (myAccount, selected, scl) == -1) {
+					selected--;
+					if (selected < 0) {
+						selected = 1;
+						--scl;
+						if (scl < 0) {scl = 0;}
+						writeScreenSelect (myAccount, scl, selected+header);
+					}
+					continue;
+				}
 				break;
 			case KEY_DOWN:
-				// FIXME: fix, still goes off end of screen
+			case 'j':
+			case 'J':
+				// BUG: fix, still goes off end of screen
 				++selected;
 				if (selected > (row-2)) {
 					--selected;
+					// What does the following code do? I think it stops date headers from being selectable
 					if (selected+scl <= myAccount->numEntry+numDateChange(myAccount)) {
 						++scl;
 						writeScreenSelect (myAccount, scl, selected+header);
@@ -392,9 +415,20 @@ int selectEntry(account *myAccount, int *scrollLine) {
 						writeScreenSelect (myAccount, scl, selected+header);
 					}
 				}
+				if (getEntryNum (myAccount, selected, scl) == -1) {
+					++selected;
+					if (selected > (row-2)) {
+						--selected;
+						if (selected+scl <= myAccount->numEntry+numDateChange(myAccount)) {
+							++scl;
+							writeScreenSelect (myAccount, scl, selected+header);
+						}
+					}
+					continue;
+				}
 				break;
 			case 10:
-				cont = 0;
+				running = 0;
 				break;
 			case 410:							// window resize
 				writeScreenSelect (myAccount, scl, selected+header);
@@ -402,13 +436,16 @@ int selectEntry(account *myAccount, int *scrollLine) {
 			case 'q':
 			case 'c':
 				return -1;
-				break;
 				
 		}
 	}
 	
 	// now to figure out what the entrynum of the selected entry is
 	selected = getEntryNum (myAccount, selected, scl);
+	if (!selected) {
+		++selected;
+		
+	}
 		
 	*scrollLine = scl;
 	writeScreen(myAccount, *scrollLine);
@@ -464,4 +501,20 @@ int calcLine(account * myAccount, int entryNum, int scl) {
 	}
 	
 	return lineNumber;
+}
+
+void printRunningHelp() {
+	
+	clear();
+	mvprintw(0,0, "Budgit\n");
+	printw( "\tq - quit\t\t\n");
+	printw( "\ta - add entry\t\t\tr - remove entry\n");
+	printw( "\ts - save account\t\tl - load account\n");
+	printw( "\tdown - scroll down\t\tup - scroll up\n");
+	printw( "\tj - scroll down\t\t\tk - scroll up\n");
+	printw( "\th - print this help\n");
+	
+	printw( "Debugging keys:\n");
+	printw( "\te - error on purpose\n");
+	
 }

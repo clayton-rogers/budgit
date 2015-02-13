@@ -1,13 +1,11 @@
 #include "accountfile.h"
 
 // *** Helper *** //
-void splitCents(int *dollars, int *cents, int inCents);	// splits cents into cents and dols
-
 void splitCents(int *dollars, int *cents, int inCents) {
+	// splits cents into cents and dols
 	
 	*dollars = (inCents)/100;		// supposed to be int div
 	*cents = inCents%100;
-	 
 }
 
 
@@ -23,6 +21,10 @@ account * loadAccount (char* filename) {
 	int balanceFoward = 0;					// it is optional, default 0
 	int dollars, cents, ret;
 	float tmpBalance;
+	char tempDesc[TAG_DESC_SIZE];
+	char tempTAGS[100];
+	int tagID;
+	
 	accName[0] = '\0';						// so we can check if it's modified
 	
 	// open the file
@@ -47,14 +49,20 @@ account * loadAccount (char* filename) {
 		fgets(buffer, BUFFER_SIZE, fp);
 		if (ferror(fp) || feof(fp)) {
 			if (accName[0] == '\0') {
-				return NULL;					// the account name has not been read ie. error
+				return NULL;					// account name is the min info we need
 			} else {
 				myAccount = newAccount(accName, balanceFoward);;
 				return myAccount;
 			}
 		}
-		if (strncmp(buffer, "ENTRIES:", 8) == 0) break;
-		if (buffer[0] == '#') continue;				// comments
+		if (strncmp(buffer, "TAGS:", 5) == 0) {		// in case we get to the next section 
+			if(accName[0] == '\0') {				// without getting an account name
+				return NULL;
+			} else {
+				break;
+			}
+		}
+		if (buffer[0] == '#') continue;					// comments
 		if (buffer[0] == '\n' || buffer[0] == ' ' || buffer[0] == '\t') continue;
 		if (strncmp(buffer, "name=", 5) == 0) {
 			sscanf(buffer, "name=%100s", accName);
@@ -62,7 +70,9 @@ account * loadAccount (char* filename) {
 		if (strncmp(buffer, "balanceFoward=", 14) == 0) {
 			sscanf(buffer, "balanceFoward=%f", &tmpBalance);
 			tmpBalance *= 100;
-			balanceFoward = tmpBalance;
+			balanceFoward = tmpBalance + 0.0001;
+			// the decimal is there so that if the machine precision rounds to
+			// x.9999999999 then the correct balance forward will still be had
 		}
 	}
 	
@@ -71,6 +81,23 @@ account * loadAccount (char* filename) {
 	if (myAccount == NULL) {
 		printf("Account could not be created\n");
 		return NULL;
+	}
+	
+	// read in the tags
+	while (1) {
+		fgets(buffer, BUFFER_SIZE, fp);
+		if (ferror(fp) || feof(fp)) break;	// finish when we hit the end of the file (should not occur)
+		if (buffer[0] == '#') continue;		// comments
+		if (buffer[0] == '\n' || buffer[0] == ' ' || buffer[0] == '\t') continue;
+		
+		// check if we have reached the next section
+		if (strncmp(buffer, "ENTRIES:", 8) == 0) break;
+		
+		// load the tag
+		if (buffer[0] != '[') continue;
+		sscanf(buffer, "[%d] %s", &tagID, tempDesc);
+		
+		newTag(tagID, tempDesc);
 	}
 	
 	// read the entries
@@ -88,31 +115,12 @@ account * loadAccount (char* filename) {
 		tmpEntry.type = 0;
 		tmpEntry.amount = 0;
 		tmpEntry.balance = 0;
-
 		
-		/*
-		sscanf(buffer, "%2hhd/%2hhd/%2hhd %100s %c:%d.%d ", 
-												&tmpEntry.Date.day,
-												&tmpEntry.Date.month,
-												&tmpEntry.Date.year,
-												tmpEntry.desc,
-												&tmpEntry.type,
-												&dollars,
-												&cents);
-		if (tmpEntry.type == 'd' || tmpEntry.type == 'D') {
-			tmpEntry.type = 0;
-		}
-		if (tmpEntry.type == 'c' || tmpEntry.type == 'C') {
-			tmpEntry.type = 1;
-		}
-		cents += dollars*100;
-		tmpEntry.amount = cents;
-		*/
-		
+		// get the date
 		sscanf(buffer, "%2hhd/%2hhd/%2hhd", &tmpEntry.Date.day,
 											&tmpEntry.Date.month,
 											&tmpEntry.Date.year);
-		// get rid of the first 8 chars
+		// get rid of the first 8 chars (the date)
 		strcpy(buffer, (buffer+8));
 		
 		// read in the description
@@ -127,6 +135,7 @@ account * loadAccount (char* filename) {
 					strncat(tmpEntry.desc, " ", 1);
 					++pt;
 				}
+				// move buffer to next letter and continue
 				strcpy(buffer, (buffer+1));
 				continue;
 			}
@@ -136,13 +145,13 @@ account * loadAccount (char* filename) {
 			strcpy(buffer, buffer+1);
 		}
 		
-		// remove trailing spaces
+		// remove trailing spaces 
 		pt = strlen(tmpEntry.desc);
 		--pt;
 		tmpEntry.desc[pt] = '\0';
 		
-		// the buffer will now only contain the amount of the transaction
-		sscanf(buffer, "%c:%d.%2d ", &tmpEntry.type, &dollars, &cents);
+		// the buffer will now only contain the amount of the transaction and the tags
+		sscanf(buffer, "%c:%d.%2d %s", &tmpEntry.type, &dollars, &cents, tempTAGS);
 		
 		if (tmpEntry.type == 'd' || tmpEntry.type == 'D') {
 			tmpEntry.type = 0;
@@ -154,11 +163,24 @@ account * loadAccount (char* filename) {
 		cents += dollars*100;
 		tmpEntry.amount = cents;
 		
-		// TODO: add tag support
+		// add the tags to the entry (clear them all first)
+		int i, curTag = 0;
+		for (i = 0; i < MAX_NUM_TAGS; ++i) {
+			tmpEntry.tags[i] = 0;
+		}
+		for (i = 0; i <= BUFFER_SIZE; ++i) {
+			if (tempTAGS[i] == ' ' || tempTAGS[i] == '\n' || tempTAGS[i] == '\0') break;
+			if (tempTAGS[i] == ',') continue;
+			
+			// assume it is a number then
+			tmpEntry.tags[curTag] = tempTAGS[i];
+			++curTag;
+		}
 				
+		// finally add the entry to the account
 		ret = addEntry(myAccount, tmpEntry);
 		if (ret != 0) {
-			printf("Error adding entry\n");
+			printf("Error adding entry from file\n");
 		}
 	}	
 	
@@ -171,8 +193,8 @@ account * loadAccount (char* filename) {
 int writeAccount (account* myAccount, char* filename) {
 	char backupFilename[FILENAME_MAX];
 	entry *tmpEntry;
-	int retErr;
 	int dollars, cents;
+	int retErr;
 	int i;
 	FILE * fp;
 	backupFilename[0] = '\0';
@@ -183,6 +205,8 @@ int writeAccount (account* myAccount, char* filename) {
 	strncat(backupFilename, ".bak", 4);
 	
 	retErr = rename(filename, backupFilename); // backup the old file if it works
+	if (retErr != 0) return 10;
+	
 	
 	// open the file
 	fp = fopen(filename, "w");

@@ -56,6 +56,7 @@ int main (int argc, char* argv[]) {
 	} else {
 		// file found, parse it
 		printf ("Config file found, parsing...\n");
+		// TODO: parse config file
 	}
 	
 	// the file will need to be passed as well.		
@@ -65,6 +66,7 @@ int main (int argc, char* argv[]) {
 	// finally run the program with the gathered settings
 	start(info);
 	
+	fclose(fp);
 	return 0;
 }
 

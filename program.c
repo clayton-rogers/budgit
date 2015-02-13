@@ -14,7 +14,7 @@ void start (runinfo infos) {
 	char running = 1;
 	char err = 0;
 	
-	acc = loadAccount("acct/test.act");
+	acc = loadAccount("acct/test.act");		// TODO: don't autoload account
 	if (acc == NULL) {
 		printf("Account could not be loaded from file\n");
 		return;
@@ -44,11 +44,15 @@ void start (runinfo infos) {
 				needRef = 1;
 				break;
 			case KEY_UP:
+			case 'k':
+			case 'K':
 				needRef = 1;
 				--scrollPos;
 				if (scrollPos < 0) scrollPos = 0;
 				break;
 			case KEY_DOWN:
+			case 'j':
+			case 'J':
 				needRef = 1;
 				++scrollPos;
 				if (scrollPos > numLines) scrollPos = numLines;
@@ -101,6 +105,12 @@ void start (runinfo infos) {
 				needRef = 1;
 				scrollPos = 0;
 				break;
+			case 'h':
+			case 'H':
+				printRunningHelp();
+				input = getch();		// wait for user to press a key
+				needRef = 1;
+				break;
 		}
 		
 		// refresh the screen if it is nesesary
@@ -114,12 +124,9 @@ void start (runinfo infos) {
 	endinit();		// end curses
 	
 	if (err) printf("There was an error during runtime.\n");
-
 	
 	
 	
-	
-
 }
 
 

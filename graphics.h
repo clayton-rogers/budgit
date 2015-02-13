@@ -18,5 +18,7 @@ int calcLine(account * myAccount, int entryNum, int scl); // calculates the line
 
 int getEntryNum(account *myAccount, int selected, int scl);			// gets the entrynum from the selected offset and the scroll line number
 
+void printRunningHelp();								// print the help info to the screen
+
 
 #endif

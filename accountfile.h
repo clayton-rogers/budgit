@@ -5,12 +5,13 @@
 #include <string.h>
 #include <ctype.h>
 #include "account.h"				// account definitions
+#include "tag.h"					// tag definitions
 
-#define BUFFER_SIZE 300
+#define BUFFER_SIZE 300				// line buffer length for reading in
 
-// loads an account with the info from filename    (non zero return -> error)
+// loads an account with the info from filename (returns NULL on error)
 account* loadAccount (char* filename);
-// write the info from an account to a file   (non zero return -> error)
+// write the info from an account to a file (returns nonzero on error)
 int writeAccount (account* myAccount, char* filename);
 
 #endif

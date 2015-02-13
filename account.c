@@ -2,7 +2,6 @@
 
 
 // *** helper funcs *** //
-void updateEntryNum (account* myAccount);		// updates the entry numbers in an account
 void swapEntries (account* myAccount, int entryNum1, int entryNum2);	// swaps two entries
 void sortAccount(account* myAccount);
 int datecmp(date date1, date date2);				// compares dates, like strcmp
@@ -21,7 +20,7 @@ void swapEntries(account* myAccount, int entryNum1, int entryNum2) {
 
 }
 
-void sortAccount(account *myAccount) {
+void sortAccount(account* myAccount) {
 	// sorts all the entries of an account
 	int isSorted = 0;		// False
 	int i;
@@ -106,6 +105,7 @@ account * newAccount (char name[], int balanceFoward) {
 	// create the account
 	account *myAccount = (account*)malloc(sizeof(account));
 	if (myAccount == NULL) {
+		printf("Not enough memory for new account\n");
 		return NULL;
 	}
 	
@@ -124,13 +124,12 @@ account * newAccount (char name[], int balanceFoward) {
 void delAccount (account* myAccount) {
 	// need to delete all the entries as well as the account itself
 	
-	int i;
-	
 	// can't delete what doesn't exist
 	if (myAccount == NULL) return;
 	
 	// first delete any transactions the account may have
 	if (myAccount->numEntry > 0) {
+		int i;
 		for (i = 0; i < myAccount->numEntry; ++i) {
 			delEntry(myAccount, i);
 		}
@@ -156,7 +155,10 @@ int addEntry (account* myAccount, entry myEntry) {
 	// if there is already 
 	if (myAccount->numEntry != 0) {
 		tmpTrans = malloc(sizeof(entry*) * (myAccount->numEntry));
-		if (tmpTrans == NULL) return 2;
+		if (tmpTrans == NULL) {
+			free(newEntry);
+			return 2;
+		}
 	
 		// copy the prev entries to tmp
 		memcpy(tmpTrans, myAccount->trans, sizeof(entry*)*myAccount->numEntry);
@@ -166,7 +168,10 @@ int addEntry (account* myAccount, entry myEntry) {
 	
 	// Allocate enough space for prev entries plus the one new one
 	myAccount->trans = malloc (sizeof(entry*) * (myAccount->numEntry+1));
-	if (myAccount->trans == NULL) return 2;
+	if (myAccount->trans == NULL) {
+		free(newEntry);
+		return 2;
+	}
 	
 	if (myAccount->numEntry != 0) {
 		// copy all the previous entries back
@@ -184,11 +189,14 @@ int addEntry (account* myAccount, entry myEntry) {
 	strncpy(newEntry->desc, myEntry.desc, ENTRY_DESC_SIZE);
 	newEntry->type = myEntry.type;
 	newEntry->amount = myEntry.amount;
+	int i;
+	for (i = 0; i < MAX_NUM_TAGS; ++i) {
+		newEntry->tags[i] = myEntry.tags[i];
+	}
 	
 	
 	// the entry was added to the end so we must sort and balance the account
 	sortAccount (myAccount);
-	
 	balanceAccount (myAccount);
 	
 	return 0;
@@ -198,7 +206,6 @@ void delEntry (account* myAccount, int entryNum) {
 	
 	// in case the entryNum is invalid
 	if (entryNum >= myAccount->numEntry) return;
-	entry** tmpTrans = malloc(sizeof(entry*) * myAccount->numEntry);
 	
 	// get the entry pointer and delete the mem
 	entry * myEntry = getEntry(myAccount, entryNum);
@@ -211,7 +218,7 @@ void delEntry (account* myAccount, int entryNum) {
 	myAccount->numEntry--;
 	
 	// copy to a new location, then copy back
-	tmpTrans = malloc(sizeof(entry*)*myAccount->numEntry);
+	entry** tmpTrans = malloc(sizeof(entry*) * myAccount->numEntry);
 	if (tmpTrans == NULL) return;
 	memcpy(tmpTrans, myAccount->trans, sizeof(entry*)*myAccount->numEntry);
 	
@@ -239,7 +246,7 @@ entry * getEntry(account *myAccount, int entryNum) {
 		return NULL;
 	}
 	
-	if (entryNum > (myAccount->numEntry-1)) {
+	if (entryNum >= myAccount->numEntry) {
 		return NULL;
 	}
 	

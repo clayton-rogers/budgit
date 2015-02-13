@@ -9,6 +9,7 @@ void gaddEntry_printLine(entry * tmpEntry, int hilight) {
 	// hilight is the field number that is going to be hilighted 
 	int row, col;
 	getmaxyx(stdscr, row, col);
+	if (col < 80) return;
 	
 	move(row-1, 0);			// move to the second last line
 	
@@ -88,7 +89,6 @@ int gaddEntry (account* myAccount) {
 		switch (input) {
 			case 410:			// screen resize
 				return 0;
-				break;
 			case KEY_RIGHT:
 			case KEY_TAB:
 				++field;
@@ -173,8 +173,6 @@ int gaddEntry (account* myAccount) {
 				break;
 			case KEY_ESC:
 				return 0;
-				//strcpy(tmpEntry.desc, "esc");
-				break;
 			default:
 				//printw("%d", input);
 				
@@ -273,6 +271,7 @@ int getFilename (char* filename) {
 	
 	// get screen dimentions
 	getmaxyx(stdscr, row, col);
+	if (col < 80) return 2;
 	
 	// turn the cursor back on
 	curs_set(1);
