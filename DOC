@@ -1,0 +1,80 @@
+program.c:
+	void start (runinfo infos)				
+		Run the interactive program with certain info
+	
+	int gaddEntry (account* myAccount)		
+		Add an entry with an interface
+		Returns true if an entry was added
+
+
+graphics.c:
+	int init(void)							
+		Starts ncurces
+		Returns non-zero if there is a problem
+		
+	void endinit(void)						
+		Ends ncurses
+	
+	void writeScreen (account *myAccount, int scrollLine)
+		Writes the whole screen, scrolled
+		
+	void writeScreenSelect (account *myAccount, int scrollLine, int selectLine)
+		Writes screen with selectLine hilighted
+		
+	int selectEntry (account* myAccount, int *scrollLine)
+		Provides an interface to select an entry
+		Returns the entryNum of the selected entry
+		Or -1 if the selection is invalid
+	
+	int calcTotalLines (account* myAccount)
+		Calculates the total number of lines an account would require to print 
+		in full
+		Returns that number
+	
+	int getEntryNum (account* myAccount, int selected, int scl)
+		Finds the entry number based on how far the account is scrolled and the
+		ofset of the selection
+		Returns the entryNum it finds, or -1 if invalid
+
+
+account.c:
+	account * newAccount (char name[], int balaceFoward)
+		Creates a new account structure and allocates memory for it
+		Returns a pointer to the new account
+	
+	void delAccount (account* myAccount)
+		Releases all the entries of the account, and then the resources of the
+		account struct itself
+	
+	int addEntry (account* myAccount, entry myEntry)
+		Dynamically creates space for a new entry, and fills that entry with
+		the info from myEntry, then adds that entry to myAccount
+		Returns non-zero on error
+	
+	void delEntry (account* myAccount, int entryNum)
+		Removes the entry with entryNum from the account, and frees the storage
+		used to hold it, if the entryNum does not exist or is invalid it is
+		ignored
+	
+	entry * getEntry (account* myAccount, int entryNum)
+		Gets a pointer to the entry with entryNum in a safe manner, if entryNum
+		is invalid or there is a problem, it returns a NULL pointer
+		Returns a pointer to the selected entry, or a NULL pointer
+
+
+accountfile.c:
+	account* loadAccount (char* filename)
+		Creates a new account and loads it with information from 'filename', if
+		the file cannot be opened, or there is any problem reading the file
+		it will return a NULL pointer
+		Returns a pointer to the newly created and loaded account, or a NULL
+	
+	int writeAccount (account *myAccount, char * filename)
+		Writes the information from myAccount to 'filename' in a manner that
+		can be read by 'loadAccount' and which is also human readable
+		Returns non-zero if there is an error
+
+
+main.c:
+	void printHelp(void)
+		Prints the help message to stdout

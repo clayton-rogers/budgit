@@ -1,0 +1,4 @@
+- All balances and transactions are stored as int's, therefore
+  they represent the number of cents in the account
+
+- Entries of accounts form a linked list 

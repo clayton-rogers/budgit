@@ -1,0 +1,32 @@
+Bank
+
+Bank program is used to read in account information from account files. 
+The accounts can then have entries added to them and graphs can be made 
+to indicate the ammount of spending that goes into each category. 
+
+It is designed to have a fully customisable interface, with keyboard
+shortcuts for any action the user desires.
+
+Usage:
+	bank [OPTION...] [ACCOUNT-FILE...]
+
+Options:
+	-s, --summary	Prints only a summary of the accounts and then exits
+	-h, --help		Prints this help
+
+
+=== Budgit ===
+
+Budgit is a subprogram to Bank, which can be used to budget money on a
+monthly basis. It uses the same account files as Bank. It allows the user to
+know how much money is left for a particular purpose.
+
+Usage:
+	bank [-b|--budgit] [ACCOUNT-FILE...]
+	budgit [OPTION...] [ACCOUNT-FILE...]
+
+Options:
+	-s, --summary			Prints only a summary of the budget and then exits
+	-h, --help				Prints this help
+	
+	

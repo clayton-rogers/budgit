@@ -1,0 +1,8 @@
+#! /bin/bash
+
+# finds all the places that need work
+cd src
+grep BUG *.h *.c -n --color=auto
+grep FIXME *.h *.c -n --color=auto
+grep TODO *.h *.c -n --color=auto
+
