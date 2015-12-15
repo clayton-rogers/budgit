@@ -8,7 +8,7 @@
 typedef struct _date {
     char day;
     char month;
-    char year;
+    int  year;
 } date;
 
 typedef struct _entry {

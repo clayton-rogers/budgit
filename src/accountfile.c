@@ -122,7 +122,7 @@ account * loadAccount (char* filename) {
         tmpEntry.balance = 0;
 
         // get the date
-        sscanf(buffer, "%2hhd/%2hhd/%2hhd", &tmpEntry.Date.day,
+        sscanf(buffer, "%2c/%2c/%2d", &tmpEntry.Date.day,
                                             &tmpEntry.Date.month,
                                             &tmpEntry.Date.year);
         // get rid of the first 8 chars (the date)
