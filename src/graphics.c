@@ -334,13 +334,23 @@ int selectEntry(account *myAccount, int *scrollLine) {
     int header = 1;         // the number of lines in the header
 
     int scl = *scrollLine;
-    int selected = calcLine(myAccount, myAccount->numEntry-1,scl) - scl;
+    int selected = calcLine(myAccount, myAccount->numEntry-1) - scl;
         // ^ sets the currently selected entry to the last one
     int input;
     int running = 1;
     int row, col;
+
+    /* These are a bit of a hack. The ncurses library checks whether the
+     * pointers passed are null. Since we're passing stack variables,
+     * they can never be null. So GCC helpfully emits a warning. So by
+     * first assigning them to a pointer, we can get rid of that
+     * warning. Since they are const pointers, there's no chance of them
+     * actually being null (or changed).
+     */
     short pair;
+    short * const pairPtr = &pair;
     attr_t prevAttr;
+    attr_t * const prevAttrPtr = &prevAttr;
 
     getmaxyx(stdscr, row, col);
     if (col < 80) return -1;    // error
@@ -374,7 +384,7 @@ int selectEntry(account *myAccount, int *scrollLine) {
                     writeScreenSelect (myAccount, scl, selected+header);
                 }
                 move(selected+1, 6);
-                attr_get(&prevAttr, &pair, NULL);
+                attr_get(prevAttrPtr, pairPtr, NULL);
                 mvprintw(0,0, "%d", pair);
                 if (pair == 3) {
                     --selected;
@@ -410,7 +420,7 @@ int selectEntry(account *myAccount, int *scrollLine) {
                     }
                 }
                 move(selected+1, 6);
-                attr_get(&prevAttr, &pair, NULL);
+                attr_get(prevAttrPtr, pairPtr, NULL);
                 mvprintw(0,0, "%d", pair);
                 if (pair == 3) {
                     ++selected;
@@ -486,7 +496,7 @@ int getEntryNum (account *myAccount, int selected, int scl) {
     return -1;
 }
 
-int calcLine(account * myAccount, int entryNum, int scl) {
+int calcLine(account * myAccount, int entryNum) {
 
     int curEntry = 0;
     int lineNumber = 0;
