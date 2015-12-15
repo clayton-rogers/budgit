@@ -66,7 +66,9 @@ int main (int argc, char* argv[]) {
 	// finally run the program with the gathered settings
 	start(info);
 	
-	fclose(fp);
+        if (fp != NULL) {
+	    fclose(fp);
+        }
 	return 0;
 }
 
