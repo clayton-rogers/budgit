@@ -8,11 +8,82 @@
 #include "input.h"
 
 //*** Helper fx ***//
-int getFilename(char* filename);        // gets a filename from the user, returns non-zero on failure
+// gets a filename from the user, returns non-zero on failure
+static int getFilename (char* filename) {
 
+    char app[2];
+    app[1] = '\0';
+    int row, col, index, hasExt = 0;
+    int running = 1, err = 0;
+    int input;
+    int curCol = 0;
 
-// *** Actual Code ***//
-void gaddEntry_printLine(entry * tmpEntry, int hilight) {
+    // get screen dimentions
+    getmaxyx(stdscr, row, col);
+    if (col < 80) return 2;
+
+    // turn the cursor back on
+    curs_set(1);
+
+    // make sure the filename is empty to begin with
+    filename[0] = '\0';
+
+    // get the filename from the user
+    move(row-1, 0);
+    addstr("Please enter the filename: ");
+    curCol = 27;
+
+    while (running) {
+        input = getch();
+
+        switch (input) {
+            case KEY_ENTER_WORKS:
+                running = 0;
+                break;
+            case KEY_ESC:
+                running = 0;
+                err = 1;
+                break;
+            case KEY_BACKSPACE:
+                filename[strlen(filename)-1] = '\0';
+                --curCol;
+                mvprintw(row-1, curCol, "  ");
+                break;
+            default:
+                // add the letter to the filename
+                app[0] = input;
+                strcat(filename, app);
+                // print the letter to the screen so the user knows it's worked
+                mvprintw(row-1, curCol, "%c", input);
+                ++curCol;
+                break;
+        }
+    }
+
+    // add the file extention if one was not given
+    index = strlen(filename);
+    --index;                    // now we're pointed at the last entry
+    while (index >= 0) {
+        if (filename[index] == '.') {
+            hasExt = 1;
+            break;
+        }
+        --index;
+    }
+
+    // is an extention is not present add it
+    if (!hasExt) {
+        strcat(filename, ".act");
+    }
+
+    // turn the cursor back off again
+    curs_set(0);
+
+    // if there is an error, return it
+    return err;
+}
+
+static void gaddEntry_printLine(entry * tmpEntry, int hilight) {
     // hilight is the field number that is going to be hilighted
     int row, col;
     getmaxyx(stdscr, row, col);
@@ -59,6 +130,13 @@ void gaddEntry_printLine(entry * tmpEntry, int hilight) {
     addch(' ');
 
     // and that's it!
+}
+
+
+// *** Actual Code ***//
+void writeScreenSelect (account *myAccount, int scrollLine, int selectLine) {
+    writeScreen (myAccount, scrollLine);
+    mvchgat (selectLine, 0, -1, A_REVERSE, 2, NULL);
 }
 
 int gaddEntry (account* myAccount) {
@@ -216,11 +294,6 @@ int gaddEntry (account* myAccount) {
     return 0;
 }
 
-void writeScreenSelect (account *myAccount, int scrollLine, int selectLine) {
-    writeScreen (myAccount, scrollLine);
-    mvchgat (selectLine, 0, -1, A_REVERSE, 2, NULL);
-}
-
 account* gloadAccount() {
 
     account * myAccount;
@@ -267,76 +340,4 @@ int gwriteAccount (account * myAccount) {
 }
 
 
-int getFilename (char* filename) {
 
-    char app[2];
-    app[1] = '\0';
-    int row, col, index, hasExt = 0;
-    int running = 1, err = 0;
-    int input;
-    int curCol = 0;
-
-    // get screen dimentions
-    getmaxyx(stdscr, row, col);
-    if (col < 80) return 2;
-
-    // turn the cursor back on
-    curs_set(1);
-
-    // make sure the filename is empty to begin with
-    filename[0] = '\0';
-
-    // get the filename from the user
-    move(row-1, 0);
-    addstr("Please enter the filename: ");
-    curCol = 27;
-
-    while (running) {
-        input = getch();
-
-        switch (input) {
-            case KEY_ENTER_WORKS:
-                running = 0;
-                break;
-            case KEY_ESC:
-                running = 0;
-                err = 1;
-                break;
-            case KEY_BACKSPACE:
-                filename[strlen(filename)-1] = '\0';
-                --curCol;
-                mvprintw(row-1, curCol, "  ");
-                break;
-            default:
-                // add the letter to the filename
-                app[0] = input;
-                strcat(filename, app);
-                // print the letter to the screen so the user knows it's worked
-                mvprintw(row-1, curCol, "%c", input);
-                ++curCol;
-                break;
-        }
-    }
-
-    // add the file extention if one was not given
-    index = strlen(filename);
-    --index;                    // now we're pointed at the last entry
-    while (index >= 0) {
-        if (filename[index] == '.') {
-            hasExt = 1;
-            break;
-        }
-        --index;
-    }
-
-    // is an extention is not present add it
-    if (!hasExt) {
-        strcat(filename, ".act");
-    }
-
-    // turn the cursor back off again
-    curs_set(0);
-
-    // if there is an error, return it
-    return err;
-}

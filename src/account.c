@@ -5,11 +5,11 @@
 #include <stdlib.h>     // for malloc
 
 // *** helper funcs *** //
-void swapEntries (account* myAccount, int entryNum1, int entryNum2);    // swaps two entries
-void sortAccount(account* myAccount);
-int datecmp(date date1, date date2);                // compares dates, like strcmp
-int entrydatecmp(entry* entry1, entry* entry2);     // compares the dates of entries
-void balancaAccount (account* myAccount);           // updates the 'balance' field
+static void swapEntries (account* myAccount, int entryNum1, int entryNum2);    // swaps two entries
+static void sortAccount(account* myAccount);
+static int datecmp(date date1, date date2);                // compares dates, like strcmp
+static int entrydatecmp(entry* entry1, entry* entry2);     // compares the dates of entries
+static void balanceAccount (account* myAccount);           // updates the 'balance' field
 
 
 void swapEntries(account* myAccount, int entryNum1, int entryNum2) {

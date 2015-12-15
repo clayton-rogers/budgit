@@ -2,15 +2,16 @@
 
 #include <ncurses.h>
 #include <string.h>
+#include "interface.h"
 #include "accountfile.h"
 #include "input.h"
 
 // *** Helper fx *** //
-int dateEqual(date date1, date date2);          // only checks the month and year
-void printEntry(entry* myEntry, int col);       // prints an entry at row 'row' using 'col' columns
-void getDateHeader(char dest[], date myDate);   // puts the char representation of 'date' into dest
-void fillPads(char buffer[], int numPads);      // fill the buffer with pads
-int numDateChange(account * myAccout);          // returns the number of date headers that will be needed for an account
+static int dateEqual(date date1, date date2);          // only checks the month and year
+static void printEntry(entry* myEntry, int col);       // prints an entry at row 'row' using 'col' columns
+static void getDateHeader(char dest[], date myDate);   // puts the char representation of 'date' into dest
+static void fillPads(char buffer[], int numPads);      // fill the buffer with pads
+static int numDateChange(account * myAccout);          // returns the number of date headers that will be needed for an account
 
 int dateEqual (date date1, date date2)  {
     if (date1.month == date2.month) {

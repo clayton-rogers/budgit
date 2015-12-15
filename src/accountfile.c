@@ -6,7 +6,7 @@
 #include "tag.h"                    // tag definitions
 
 // *** Helper *** //
-void splitCents(int *dollars, int *cents, int inCents) {
+static void splitCents(int *dollars, int *cents, int inCents) {
     // splits cents into cents and dols
 
     *dollars = (inCents)/100;       // supposed to be int div

@@ -4,7 +4,7 @@
 #include <string.h>
 #include "program.h"
 
-void printHelp(void);
+static void printHelp(void);
 
 int main (int argc, char* argv[]) {
 

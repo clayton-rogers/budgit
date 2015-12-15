@@ -4,10 +4,13 @@
 #include <stdlib.h>         // malloc
 #include <string.h>         // for string copy
 
-// GLOBAL //
-bool isFirstRun_TAG = true;             // so that we can initialize on first run
-tag * tags[MAX_NUM_TOTAL_TAGS];
 
+// private
+static bool isFirstRun_TAG = true;             // so that we can initialize on first run
+static tag * tags[MAX_NUM_TOTAL_TAGS];
+
+
+// public
 int newTag (int exID, char * desc) {
     if (isFirstRun_TAG) {
         isFirstRun_TAG = false;
