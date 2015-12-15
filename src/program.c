@@ -1,6 +1,8 @@
 // *** Top level of the running program *** //
 #include <stdbool.h>
 
+#include <ncurses.h>
+
 #include "program.h"
 #include "input.h"
 #include "settings.h"

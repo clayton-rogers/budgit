@@ -1,10 +1,6 @@
 #ifndef ACCOUNT_H
 #define ACCOUNT_H
 
-#include <string.h>     // strncpy
-#include <stdio.h>      // error mesg
-#include <stdlib.h>     // for malloc
-
 #define ACCOUNT_NAME_SIZE   100     // size of the name field of an account
 #define ENTRY_DESC_SIZE     100     // size of the description field of an entry
 #define MAX_NUM_TAGS        15      // the maximum number of tags that can be assosiated with an entry

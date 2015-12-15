@@ -1,8 +1,7 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include <stdio.h>
-
+#include <stdio.h>  // for FILENAME_MAX
 
 typedef struct _runinfo {
     char filename[FILENAME_MAX];

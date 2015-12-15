@@ -1,5 +1,10 @@
 #include "graphics.h"
 
+#include <ncurses.h>
+#include <string.h>
+#include "accountfile.h"
+#include "input.h"
+
 // *** Helper fx *** //
 int dateEqual(date date1, date date2);          // only checks the month and year
 void printEntry(entry* myEntry, int col);       // prints an entry at row 'row' using 'col' columns
@@ -18,7 +23,7 @@ int dateEqual (date date1, date date2)  {
 }
 
 void printEntry(entry * myEntry, int col) {
-    int descSize = col;
+    unsigned int descSize = col;
     char buffer[200];
     int dollars, cents;
     buffer[0] = '\0';   // empty string

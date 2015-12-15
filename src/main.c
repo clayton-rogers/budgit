@@ -2,11 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "settings.h"
 #include "program.h"
-
-#define FILENAME_LEN FILENAME_MAX
-#define CONFIG_FILE "/home/clayton/.budgit/budgit.conf"
 
 void printHelp(void);
 
@@ -16,8 +12,7 @@ int main (int argc, char* argv[]) {
     int i;
     char *arg;          // the current argument to be parsed
     //int settings = 0; // the settings that the program is to run with
-    char filename[FILENAME_LEN];    // input filename
-    FILE *fp;           // input file
+    char filename[FILENAME_MAX];    // input filename
     runinfo info;       // all the information that we need to pass to the running program
 
     // *** Parse the command line arguments *** //
@@ -44,20 +39,9 @@ int main (int argc, char* argv[]) {
         } else {
             // if it's not an option, it must be the filename
             // NOTE: only the last filename will be used
-            strncpy(filename, arg, FILENAME_LEN);
+            strncpy(filename, arg, FILENAME_MAX);
         }
 
-    }
-
-    // now that the command line settings are accounted for, check for a config file
-    fp = fopen(CONFIG_FILE, "r");
-    if (fp == NULL) {
-        // file does not exist
-        printf ("Note: No config file found at ~/.budgit/budgit.conf\n");
-    } else {
-        // file found, parse it
-        printf ("Config file found, parsing...\n");
-        // TODO: parse config file
     }
 
     // the file will need to be passed as well.
@@ -66,10 +50,6 @@ int main (int argc, char* argv[]) {
     }
     // finally run the program with the gathered settings
     start(info);
-
-    if (fp != NULL) {
-        fclose(fp);
-    }
 
     return 0;
 }

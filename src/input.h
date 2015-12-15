@@ -7,6 +7,4 @@
 #define DIGIT_BIT       48
 #define KEY_TAB         9
 
-
-
 #endif

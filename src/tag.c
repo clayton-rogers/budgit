@@ -1,12 +1,16 @@
 #include "tag.h"
 
+#include <stdbool.h>
+#include <stdlib.h>         // malloc
+#include <string.h>         // for string copy
+
 // GLOBAL //
-int isFirstRun_TAG = 1;             // so that we can initialize on first run
+bool isFirstRun_TAG = true;             // so that we can initialize on first run
 tag * tags[MAX_NUM_TOTAL_TAGS];
 
 int newTag (int exID, char * desc) {
     if (isFirstRun_TAG) {
-        isFirstRun_TAG = 0;
+        isFirstRun_TAG = false;
         // do init stuff
         int i;
         for (i = 0; i < MAX_NUM_TOTAL_TAGS; ++i) {
@@ -15,11 +19,11 @@ int newTag (int exID, char * desc) {
     }
 
     int i;
-    int isGood = 0;
+    bool isGood = false;
     for (i = 0; i < MAX_NUM_TOTAL_TAGS; ++i) {
         // return i of unused tag
         if (tags[i] == NULL) {
-            isGood = 1;
+            isGood = true;
             break;
         }
     }

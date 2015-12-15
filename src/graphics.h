@@ -1,10 +1,7 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
-#include <ncurses.h>
 #include "account.h"
-#include "accountfile.h"
-#include "input.h"
 
 // *** Actual fx *** //
 int init(void);         // starts up all the ncurses stuff (non zero return -> error)

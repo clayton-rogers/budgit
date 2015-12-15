@@ -1,5 +1,8 @@
 #include "account.h"
 
+#include <string.h>     // strncpy
+#include <stdio.h>      // error mesg
+#include <stdlib.h>     // for malloc
 
 // *** helper funcs *** //
 void swapEntries (account* myAccount, int entryNum1, int entryNum2);    // swaps two entries

@@ -1,5 +1,12 @@
 #include "interface.h"
 
+#include <ncurses.h>
+#include <string.h>
+#include <ctype.h>
+#include "graphics.h"
+#include "accountfile.h"
+#include "input.h"
+
 //*** Helper fx ***//
 int getFilename(char* filename);        // gets a filename from the user, returns non-zero on failure
 

@@ -1,5 +1,10 @@
 #include "accountfile.h"
 
+#include <stdio.h>                  // file input / output
+#include <string.h>
+#include <ctype.h>
+#include "tag.h"                    // tag definitions
+
 // *** Helper *** //
 void splitCents(int *dollars, int *cents, int inCents) {
     // splits cents into cents and dols
