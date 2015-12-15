@@ -1,8 +1,9 @@
 #include "account.h"
 
-#include <string.h>     // strncpy
-#include <stdio.h>      // error mesg
-#include <stdlib.h>     // for malloc
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
 // *** helper funcs *** //
 static void swapEntries (account* myAccount, int entryNum1, int entryNum2);    // swaps two entries
@@ -25,12 +26,12 @@ void swapEntries(account* myAccount, int entryNum1, int entryNum2) {
 
 void sortAccount(account* myAccount) {
     // sorts all the entries of an account
-    int isSorted = 0;       // False
+    bool isSorted = false;
     int i;
     int result;
 
     while (!isSorted) {
-        isSorted = 1;       // True
+        isSorted = true;
 
         // the last entry is located at 'getEntry(myAccount, myAccount->numEntry-1)
 

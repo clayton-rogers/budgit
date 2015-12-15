@@ -7,7 +7,7 @@
 #include "accountfile.h"
 #include "input.h"
 
-//*** Helper fx ***//
+// *** Helper fx *** //
 // gets a filename from the user, returns non-zero on failure
 static int getFilename (char* filename) {
 
