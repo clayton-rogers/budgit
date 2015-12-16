@@ -6,15 +6,15 @@
 #define MAX_NUM_TAGS        15      // the maximum number of tags that can be assosiated with an entry
 
 typedef struct _date {
-    char day;
-    char month;
-    int  year;
+    short day;
+    short month;
+    short year;
 } date;
 
 typedef struct _entry {
     date Date;                      // date of the transaction
     char desc[ENTRY_DESC_SIZE];     // description of the transaction
-    char type;                      // 0 - debit, 1 - credit, else - error
+    short type;                      // 0 - debit, 1 - credit, else - error
     int amount;                     // amount to be cashed
     int balance;                    // the balace imediately after the transaction
     int tags[MAX_NUM_TAGS];         // the tags associated with the enty

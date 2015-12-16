@@ -140,7 +140,7 @@ void delAccount (account* myAccount) {
     }
 
     // remove the account itself
-    free ( (void*) myAccount);
+    free (myAccount);
 }
 
 int addEntry (account* myAccount, entry myEntry) {
@@ -243,7 +243,6 @@ void delEntry (account* myAccount, int entryNum) {
 }
 
 entry * getEntry(account *myAccount, int entryNum) {
-    entry *retEntry;
 
     // if the index is invalid, return NULL
     if (entryNum < 0) {
@@ -254,9 +253,5 @@ entry * getEntry(account *myAccount, int entryNum) {
         return NULL;
     }
 
-
-    // Else return the proper entry
-    retEntry = myAccount->trans[entryNum];
-
-    return retEntry;
+    return myAccount->trans[entryNum];
 }

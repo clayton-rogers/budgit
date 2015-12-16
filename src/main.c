@@ -12,8 +12,9 @@ int main (int argc, char* argv[]) {
     int i;
     char *arg;          // the current argument to be parsed
     //int settings = 0; // the settings that the program is to run with
-    char filename[FILENAME_MAX];    // input filename
+    char filename[FILENAME_MAX] = "\0";    // input filename
     runinfo info;       // all the information that we need to pass to the running program
+    strcpy(info.filename, "\0");
 
     // *** Parse the command line arguments *** //
     for (i = 1; i < argc; ++i) {
@@ -39,7 +40,8 @@ int main (int argc, char* argv[]) {
         } else {
             // if it's not an option, it must be the filename
             // NOTE: only the last filename will be used
-            strncpy(filename, arg, FILENAME_MAX);
+            strncpy(filename, arg, sizeof(filename));
+            filename[sizeof(filename)-1] = '\0';
         }
 
     }

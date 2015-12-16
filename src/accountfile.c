@@ -122,7 +122,7 @@ account * loadAccount (char* filename) {
         tmpEntry.balance = 0;
 
         // get the date
-        sscanf(buffer, "%2c/%2c/%2d", &tmpEntry.Date.day,
+        sscanf(buffer, "%2hd/%2hd/%2hd", &tmpEntry.Date.day,
                                             &tmpEntry.Date.month,
                                             &tmpEntry.Date.year);
         // get rid of the first 8 chars (the date)
@@ -156,7 +156,7 @@ account * loadAccount (char* filename) {
         tmpEntry.desc[pt] = '\0';
 
         // the buffer will now only contain the amount of the transaction and the tags
-        sscanf(buffer, "%c:%d.%2d %s", &tmpEntry.type, &dollars, &cents, tempTAGS);
+        sscanf(buffer, "%hd:%d.%2d %s", &tmpEntry.type, &dollars, &cents, tempTAGS);
 
         if (tmpEntry.type == 'd' || tmpEntry.type == 'D') {
             tmpEntry.type = 0;
